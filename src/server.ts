@@ -99,6 +99,7 @@ app.use((req: Request, res: Response, next) => {
 -------------------------------------------------------------------------- */
 if (isMainModule(import.meta.url)) {
   const port = 4200;
+  const host = '0.0.0.0';
   app.listen(port, (error?: unknown) => {
     if (error) {
       const msg = error instanceof Error ? error.message : String(error);
