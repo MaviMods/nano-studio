@@ -47,7 +47,7 @@ export class Home {
     {
       id: 6,
       title: 'Beach Bikini',
-      discription: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original with no face changes. If the reference image has two people, include both of them in the same beach scene, interacting naturally while keeping their original faces and expressions. Change only the background to a bright, sunny beach with blue sky and gentle ocean waves. Pose the person naturally leaning slightly forward or sideways as if enjoying the beach breeze. Dress the person in a solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Maintain warm, natural beach lighting and realistic shadows for a vibrant, relaxed atmosphere.'
+      dscription: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original with no face changes. If the reference image has two people, include both of them in the same beach scene, interacting naturally while keeping their original faces and expressions. Change only the background to a bright, sunny beach with blue sky and gentle ocean waves. Pose the person naturally leaning slightly forward or sideways as if enjoying the beach breeze. Dress the person in a solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Maintain warm, natural beach lighting and realistic shadows for a vibrant, relaxed atmosphere.'
     },
     {
       id: 7,
