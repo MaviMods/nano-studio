@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "node dist/nano-studio/server/server.mjs",
-    "build": "ng build && ng run nano-studio:server",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:nano-studio": "node dist/nano-studio/server/server.mjs"
