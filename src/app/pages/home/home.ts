@@ -26,19 +26,50 @@ export class Home {
     },
     {
       id: 2,
-      title: 'Soft',
-      description: 'Soft pastel background, minimal shadows, lifestyle vibe'
+      title: 'Bikini Dance',
+      description: 'Keep the exact same face, facial features, expression, and hairstyle as in the reference image with no changes. Place her on a beach in natural daylight, wearing a full two-piece bikini. She performs a graceful classical dance pose, looking directly at the camera. Her hands are empty. Use a medium shot, not a long shot, with realistic lighting and natural details.'
     },
     {
       id: 3,
-      title: 'Noir',
-      description: 'Moody noir lighting, dramatic shadows, premium feel'
+      title: 'Bikini New',
+      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not modify any face, facial expression, lips, makeup, hair, or body shape. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded gathered cups joined by a small central ring. Thin straps tie around the neck and wrap around the torso, forming a multi-strap cut-out pattern. Add a sheer lightweight sarong or wrap skirt tied on the right hip with a bow, made of transparent fabric with a subtle floral or swirling abstract pattern, falling to mid-thigh. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
     },
     {
       id: 4,
-      title: 'Vibrant',
-      description: 'Bright gradient backdrop, playful, vibrant retail look'
+      title: 'Upskirt',
+      description: 'Keep the same person’s face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
     },
+    {
+      id: 5,
+      title: 'Bikini Stand',
+      description: 'Keep the same face, facial expression, body proportions, background, lighting, hairstyle, and camera angle as the reference image. Do not change the face or its expression. The person is standing in a confident fashion-pose with one leg slightly forward and the upper body leaning forward noticeably, hand resting on the thigh. Change only the outfit. The outfit is a modern, stylish two-piece bikini with a deep sweetheart neckline and coordinated bottoms, paired with trendy high-heel sneakers. Maintain the same background, lighting, shadows, and realistic appearance as the original image.'
+    },
+    {
+      id: 6,
+      title: 'Beach Bikini',
+      discription: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original with no face changes. If the reference image has two people, include both of them in the same beach scene, interacting naturally while keeping their original faces and expressions. Change only the background to a bright, sunny beach with blue sky and gentle ocean waves. Pose the person naturally leaning slightly forward or sideways as if enjoying the beach breeze. Dress the person in a solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Maintain warm, natural beach lighting and realistic shadows for a vibrant, relaxed atmosphere.'
+    },
+    {
+      id: 7,
+      title: 'Beach Laying',
+      discription: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original, with no face changes. If the reference image has two people, include both of them naturally together in the same beach scene, keeping their original poses. Change only the background to a bright, sunny beach with clear sky and soft sand. Position the person lying on their stomach on the beach, propped slightly on their elbows, with head up and looking toward the camera. Keep the body relaxed and natural. Maintain a natural, happy facial expression. Dress the person in a tasteful, solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Ensure realistic lighting and shadows that match the outdoor beach environment, with warm sunlight and gentle reflections from the sand and sea. Keep the overall image realistic, bright, and cheerful.'
+    },
+    {
+      id: 8,
+      title: 'Beach Knees',
+      discription: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original with no face changes. If the reference image has two people, include both of them together in the same scene, preserving their faces and expressions. Change only the background to a bright, sunny beach with soft sand and clear blue sky. Position the person kneeling naturally on the sand with legs slightly apart for balance, looking toward the camera with a happy, relaxed expression. Dress the person in a modest, solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Maintain realistic sunlight, soft shadows, and natural beach lighting that enhances a cheerful, vacation-like atmosphere.'
+    },
+    {
+      id: 9,
+      title: 'Bathroom',
+      discription: 'Use the first image as the base. Keep the same person, pose, face, hairstyle, and expression exactly as in the original. Dress the person in a clean, bath towel wrapped modestly around the body and show full thighs, as if just after a shower. Replace the background with a bright, modern bathroom interior that matches the lighting and perspective of the original photo. Keep the result realistic.'
+    },
+    {
+      id: 10,
+      title: 'Bathroom hidden',
+      discription: 'Use the first image as the base. Keep the same person, face, and hairstyle exactly as in the original. The person is wrapped modestly in a clean bath towel, as if just after a shower. They are now looking directly at the camera with a slight, caught-off-guard expression—a subtle widening of the eyes and a hint of worry, as if theyve just noticed the observer. The expression is natural and understated, not overacted. The scene is viewed from a high-angle perspective, as if from a small, open window positioned high on a bathroom wall, looking down into the room. Their posture is tense, frozen mid-action. The background is a bright, modern bathroom interior. Keep the scene realistic and natural, maintaining a fully appropriate and modest tone.'
+    },
+    
   ]);
 
   readonly selectedPreset = signal<string | null>(null);
