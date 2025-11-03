@@ -21,8 +21,8 @@ export class Home {
   readonly presets = signal<{ id: number; title: string; description: string }[]>([
     {
       id: 1,
-      title: 'Studio',
-      description: 'Studio lighting, high contrast product shot, reflective surface'
+      title: 'Bikini',
+      description: 'Create an ultra-realistic portrait of the same woman from the reference image. Keep her face, expression, shape, and body exactly the same. Dress her in two-piece v neck bikini with straps with separate top and bottom pieces. Keep her midriff and navel naturally visible. Maintain the same pose, lighting, and background as the reference. Emphasize realism, natural skin tone, accurate proportions, and detailed texture while ensuring the overall look remains elegant and lifelike.'
     },
     {
       id: 2,
