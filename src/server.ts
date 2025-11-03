@@ -98,7 +98,7 @@ app.use((req: Request, res: Response, next) => {
  🚀 START SERVER
 -------------------------------------------------------------------------- */
 if (isMainModule(import.meta.url)) {
-  const port = process.env['PORT'] || 4000;
+  const port = 4200;
   app.listen(port, (error?: unknown) => {
     if (error) {
       const msg = error instanceof Error ? error.message : String(error);
