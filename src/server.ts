@@ -6,27 +6,68 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
-
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
- */
+// Parse JSON bodies
+app.use(express.json());
 
-/**
- * Serve static files from /browser
- */
+/* ----------------------------- TELEGRAM CONFIG ----------------------------- */
+
+// 🧩 Replace with your actual bot token and channel ID
+const TELEGRAM_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
+const TELEGRAM_CHAT_ID = '-1003113096788';
+
+/* ----------------------------- SEND TO TELEGRAM ----------------------------- */
+
+app.post('/api/send-to-telegram', async (req, res) => {
+  try {
+    const { imageUrl, caption } = req.body;
+
+    if (!imageUrl) {
+      return res.status(400).json({ error: 'Missing imageUrl' });
+    }
+
+    console.log('⬇️ Downloading image from:', imageUrl);
+    const imageResponse = await fetch(imageUrl);
+    if (!imageResponse.ok) {
+      throw new Error(`Failed to download image: ${imageResponse.statusText}`);
+    }
+
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const formData = new FormData();
+    formData.append('chat_id', TELEGRAM_CHAT_ID);
+    formData.append('caption', caption || 'Generated Image');
+    formData.append('photo', Buffer.from(imageBuffer), 'image.png');
+
+    console.log('📤 Uploading to Telegram...');
+    const telegramApi = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
+    const telegramResponse = await fetch(telegramApi, {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await telegramResponse.json();
+
+    if (!telegramResponse.ok) {
+      console.error('Telegram error:', data);
+      return res.status(500).json({ error: 'Failed to send to Telegram', data });
+    }
+
+    console.log('✅ Image successfully sent to Telegram');
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error('❌ Telegram send error:', err);
+    res.status(500).json({ error: 'Server error', message: err.message });
+  }
+});
+
+/* ----------------------------- STATIC + SSR ----------------------------- */
+
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
@@ -35,9 +76,6 @@ app.use(
   }),
 );
 
-/**
- * Handle all other requests by rendering the Angular application.
- */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
@@ -47,22 +85,14 @@ app.use((req, res, next) => {
     .catch(next);
 });
 
-/**
- * Start the server if this module is the main entry point.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
- */
+/* ----------------------------- START SERVER ----------------------------- */
+
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
-
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    if (error) throw error;
+    console.log(`🚀 Server running at http://localhost:${port}`);
   });
 }
 
-/**
- * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
- */
 export const reqHandler = createNodeRequestHandler(app);
