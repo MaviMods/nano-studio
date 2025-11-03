@@ -51,6 +51,128 @@ The core value proposition is the ability to generate studio-quality images with
 
 ---
 
+## Code Highlights 👨🏾‍💻
+The core logic for interacting with the Gemini model is in `src/app/services/core/ai/ai.service.ts`.
+
+### 1. Model Initialization
+The service initializes the `gemini-2.5-flash-image` model, configured to return a JPEG image.
+
+```typescript
+// src/app/services/core/ai/ai.service.ts
+
+constructor() {
+  // Initialize Gemini Developer API/Vertex AI Gemini API Service
+  const geminiAI = getAI(this.firebaseApp, {backend: new GoogleAIBackend()});
+
+  this.model = getGenerativeModel(geminiAI, {
+    model: 'gemini-2.5-flash-image',
+    generationConfig: {
+      responseModalities: [ResponseModality.IMAGE],
+      responseMimeType: 'image/jpeg',
+    },
+  });
+}
+```
+
+### 2. Content Generation
+The `generateContent` method constructs a detailed payload containing the system prompt, the user's text prompt, and the uploaded image (as a base64 string).
+
+```typescript
+// src/app/services/core/ai/ai.service.ts
+
+async generateContent(prompt: string, base64Img: string): Promise<string> {
+  const payloadText = `You are NanoViz, an expert AI visual stylist...`; // Full system prompt
+
+  const payload: GenerateContentRequest = {
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { text: payloadText },
+          {
+            inlineData: {
+              mimeType: 'image/jpeg',
+              data: base64Img,
+            }
+          }
+        ]
+      }
+    ],
+    generationConfig: {
+      responseModalities: [ResponseModality.IMAGE],
+    },
+  };
+
+  const response = await this.model.generateContent(payload);
+  // ...
+}
+```
+
+### 3. System Prompt
+A detailed system prompt guides the AI to act as a professional product photographer, ensuring high-quality, context-aware results while preserving the product's integrity.
+
+```typescript
+// src/app/services/core/ai/ai.service.ts
+
+const payloadText = `You are NanoViz, an expert AI visual stylist specializing in professional product photography.
+
+PRIMARY GOAL:
+Transform product images into high-end, market-ready visuals while maintaining brand integrity and enhancing market appeal.
+
+CORE CAPABILITIES:
+1. Product Enhancement
+- Maintain product as primary focal point with perfect clarity
+- Preserve exact: colors, textures, proportions, branding elements
+- Optimize lighting and contrast for product details
+
+2. Environmental Integration
+- Seamlessly composite products into authentic settings
+...
+`;
+```
+
+### 4. Frontend Integration
+The `Home` component in `src/app/pages/home/home.ts` injects the `AiService` and calls the `generateContent` method. The returned image URL is stored in a signal, which is then used to display the image in the template.
+
+```typescript
+// src/app/pages/home/home.ts
+
+export class Home {
+  // ...
+  readonly resultUrl = signal<string | null>(null);
+  aiService = inject(AiService);
+
+  async generate(): Promise<void> {
+    // ...
+    this.aiService.generateContent(this.prompt(), this.base64Image()!)
+      .then(async res => {
+        this.resultUrl.set(res);
+        // ...
+      })
+  }
+}
+```
+
+The template (`src/app/pages/home/home.html`) conditionally renders the result image using the `resultUrl` signal.
+
+```html
+<!-- src/app/pages/home/home.html -->
+
+<div class="card">
+  <h2 class="text-xl fw-semibold">Result</h2>
+  @if (loading()) {
+    <!-- ... -->
+  } @else if (hasResult()) {
+    <div class="result">
+      <img [src]="resultUrl()!" alt="Generated image result" />
+    </div>
+    <!-- ... -->
+  }
+</div>
+```
+
+---
+
 ## Getting started 🛠️
 
 ### 🧪 Quick Start with Firebase Studio
