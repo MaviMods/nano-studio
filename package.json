@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node dist/nano-studio/server/server.mjs",
+    "start": "node src/server.ts",
     "build": "ng build && ng run nano-studio:server",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
