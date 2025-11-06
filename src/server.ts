@@ -12,47 +12,56 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-// Handle large payloads safely
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Allow larger uploads
+app.use(express.json({ limit: '15mb' }));
+app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
-/**
- * Telegram credentials
- */
+// Telegram setup
 const BOT_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
 const CHAT_ID = '-1003113096788';
+
 /**
- * POST endpoint to send image or message to Telegram
- * Logs only to console, no response to client
+ * Flexible endpoint for Telegram logging
+ * Works for base64 images, URLs, or plain text
+ * Logs only to console, no response sent
  */
 app.post('/api/send-to-telegram', async (req, res) => {
   try {
-    if (!req.body) {
-      console.error('[Telegram API] ❌ No request body received.');
+    const { image, photo, file, caption, text, message } = req.body || {};
+
+    const content = image || photo || file || text || message;
+
+    if (!content) {
+      console.error('[Telegram API] ❌ No image or message field received.');
       return;
     }
 
-    const { image, caption } = req.body;
-    if (!image) {
-      console.error('[Telegram API] ❌ Missing image field.');
-      return;
-    }
+    // Detect base64 vs URL vs text
+    let tgEndpoint = '';
+    let formData: FormData | null = null;
 
-    const formData = new FormData();
-
-    // Handle base64 or direct URL
-    if (image.startsWith('data:image/')) {
-      const base64Data = image.split(',')[1];
+    if (content.startsWith('data:image/')) {
+      const base64Data = content.split(',')[1];
       const buffer = Buffer.from(base64Data, 'base64');
+      formData = new FormData();
       formData.append('photo', new Blob([buffer]), 'image.jpg');
+      if (caption) formData.append('caption', caption);
+      formData.append('chat_id', CHAT_ID);
+      tgEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+    } else if (content.startsWith('http')) {
+      formData = new FormData();
+      formData.append('photo', content);
+      if (caption) formData.append('caption', caption);
+      formData.append('chat_id', CHAT_ID);
+      tgEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
     } else {
-      formData.append('photo', image);
+      formData = new FormData();
+      formData.append('chat_id', CHAT_ID);
+      formData.append('text', content);
+      tgEndpoint = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
     }
 
-    if (caption) formData.append('caption', caption);
-    formData.append('chat_id', CHAT_ID);
-
-    const tgResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+    const tgResponse = await fetch(tgEndpoint, {
       method: 'POST',
       body: formData,
     });
@@ -61,19 +70,21 @@ app.post('/api/send-to-telegram', async (req, res) => {
 
     if (!tgResponse.ok || tgData?.ok === false) {
       console.error(
-        `[Telegram API] ❌ Failed to send. Reason: ${tgData?.description || 'Unknown error'}`
+        `[Telegram API] ❌ Failed: ${tgData?.description || 'Unknown error'}`
       );
       return;
     }
 
-    console.log('[Telegram API] ✅ Sent image successfully.');
+    console.log(
+      `[Telegram API] ✅ Sent successfully to ${CHAT_ID} (${tgEndpoint.includes('sendPhoto') ? 'photo' : 'text'})`
+    );
   } catch (err: any) {
-    console.error('[Telegram API] ❌ Error:', err.message);
+    console.error('[Telegram API] ❌ Exception:', err.message);
   }
 });
 
 /**
- * Serve static files from /browser
+ * Serve static files
  */
 app.use(
   express.static(browserDistFolder, {
@@ -84,12 +95,14 @@ app.use(
 );
 
 /**
- * Handle Angular SSR
+ * Angular SSR
  */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
+    .then((response) =>
+      response ? writeResponseToNodeResponse(response, res) : next()
+    )
     .catch(next);
 });
 
@@ -105,6 +118,6 @@ if (isMainModule(import.meta.url)) {
 }
 
 /**
- * Export for Angular SSR
+ * Export handler
  */
 export const reqHandler = createNodeRequestHandler(app);
