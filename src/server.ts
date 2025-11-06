@@ -1,173 +1,126 @@
-/* --------------------------------------------------------------------------
- Safe send-to-telegram handler
--------------------------------------------------------------------------- */
-import fetch, { AbortError } from 'node-fetch';
-import FormData from 'form-data';
-import { URL } from 'url';
-import mime from 'mime-types'; // optional but handy; `npm i mime-types`
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
+import express from 'express';
+import { join } from 'node:path';
 
-const TELEGRAM_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
+// --- Telegram Imports ---
+import bodyParser from 'body-parser';
+import mime from 'mime-types';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+
+// --------------------------------------------------
+// ⚙️ CONFIGURE YOUR TELEGRAM DETAILS HERE
+// --------------------------------------------------
+const TELEGRAM_BOT_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
 const TELEGRAM_CHAT_ID = '-1003113096788';
 
-const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB max (tune as needed)
-const DOWNLOAD_TIMEOUT_MS = 15_000; // 15s download timeout
+// --------------------------------------------------
 
-app.post('/api/send-to-telegram', async (req: Request, res: Response): Promise<void> => {
-  if (!TELEGRAM_TOKEN || !TELEGRAM_CHAT_ID) {
-    res.status(500).json({ error: 'Server misconfiguration: TELEGRAM_TOKEN or TELEGRAM_CHAT_ID missing' });
-    return;
-  }
+const browserDistFolder = join(import.meta.dirname, '../browser');
+const app = express();
+const angularApp = new AngularNodeAppEngine();
 
-  const { imageUrl, caption } = req.body as { imageUrl?: string; caption?: string };
-  if (!imageUrl) {
-    res.status(400).json({ error: 'Missing imageUrl in request body' });
-    return;
-  }
+/**
+ * Example Express Rest API endpoints can be defined here.
+ * Uncomment and define endpoints as necessary.
+ */
+app.use(bodyParser.json({ limit: '10mb' }));
 
-  // Create an AbortController we can use to cancel the remote fetch.
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), DOWNLOAD_TIMEOUT_MS);
-
-  // If client disconnects, abort the download to avoid dangling work.
-  req.on('aborted', () => {
-    controller.abort();
-  });
-
+// --------------------------------------------------
+// 📡 Telegram API Route
+// --------------------------------------------------
+app.post('/api/send-to-telegram', async (req, res) => {
   try {
-    let buffer: Buffer;
-    let contentType = 'application/octet-stream';
-    let filename = 'image.png';
-
-    if (typeof imageUrl === 'string' && imageUrl.startsWith('data:image')) {
-      // data URI (base64)
-      const base64 = imageUrl.split(',')[1] || '';
-      buffer = Buffer.from(base64, 'base64');
-      contentType = (imageUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+)/) || [])[1] || 'image/png';
-      const ext = mime.extension(contentType) || 'png';
-      filename = `image.${ext}`;
-    } else {
-      // treat as remote URL
-      let url: string;
-      try {
-        // validate URL properly; this will throw for invalid urls
-        const u = new URL(imageUrl);
-        url = u.href;
-      } catch {
-        throw new Error('Invalid image URL');
-      }
-
-      // Fetch the remote image, streaming into memory with size checks
-      const resp = await fetch(url, {
-        method: 'GET',
-        signal: controller.signal,
-        headers: {
-          // some servers block default user agents; make it look like a browser
-          'User-Agent': 'Mozilla/5.0 (compatible; NanoStudio/1.0)',
-          Accept: 'image/*,*/*;q=0.8',
-        },
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
+      return res.status(500).json({
+        error: 'Server misconfiguration: Telegram credentials missing',
       });
-
-      if (!resp.ok) {
-        throw new Error(`Failed to fetch image, status ${resp.status}`);
-      }
-
-      const ct = resp.headers.get('content-type') || '';
-      contentType = ct.split(';')[0].trim() || '';
-
-      // Reject obvious HTML responses (common when a link expired)
-      if (!contentType.startsWith('image/')) {
-        throw new Error(`Remote resource is not an image, content-type=${contentType}`);
-      }
-
-      // Check content-length header if present
-      const contentLengthHeader = resp.headers.get('content-length');
-      if (contentLengthHeader) {
-        const contentLength = parseInt(contentLengthHeader, 10);
-        if (!Number.isNaN(contentLength) && contentLength > MAX_IMAGE_BYTES) {
-          throw new Error(`Image too large (${contentLength} bytes). Max is ${MAX_IMAGE_BYTES}`);
-        }
-      }
-
-      // Accumulate buffer safely
-      const reader = resp.body;
-      if (!reader) throw new Error('No response body');
-
-      const chunks: Buffer[] = [];
-      let total = 0;
-
-      await new Promise<void>((resolve, reject) => {
-        reader.on('data', (chunk: Buffer) => {
-          total += chunk.length;
-          if (total > MAX_IMAGE_BYTES) {
-            // prevent OOM; destroy and reject
-            controller.abort(); // stop fetch
-            reject(new Error('Image exceeds maximum allowed size'));
-            return;
-          }
-          chunks.push(Buffer.from(chunk));
-        });
-        reader.on('end', () => {
-          buffer = Buffer.concat(chunks);
-          resolve();
-        });
-        reader.on('error', (err) => {
-          reject(err);
-        });
-        // If the controller aborts, propagate that
-        controller.signal.addEventListener('abort', () => {
-          reject(new Error('Download aborted'));
-        });
-      });
-
-      // Derive filename from URL or content-type
-      const ext = mime.extension(contentType) || 'png';
-      const parsed = new URL(url);
-      const base = parsed.pathname.split('/').pop() || `image.${ext}`;
-      filename = base.includes('.') ? base : `${base}.${ext}`;
     }
 
-    // Prepare form data for Telegram
-    const telegramApi = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendPhoto`;
+    const { imageUrl } = req.body;
+    if (!imageUrl) {
+      return res.status(400).json({ error: 'Missing imageUrl in request body' });
+    }
+
+    const response = await fetch(imageUrl);
+    if (!response.ok) {
+      return res.status(400).json({ error: 'Failed to fetch image from provided URL' });
+    }
+
+    const buffer = Buffer.from(await response.arrayBuffer());
+    const contentType = response.headers.get('content-type') || 'image/jpeg';
+    const extension = mime.extension(contentType) || 'jpg';
+    const filename = `upload.${extension}`;
+
     const form = new FormData();
     form.append('chat_id', TELEGRAM_CHAT_ID);
-    form.append('caption', caption || '🖼️ Generated Image from Nano Studio');
+    form.append('photo', buffer, { filename, contentType });
 
-    // For FormData from `form-data` lib, third param can be { filename, contentType }
-    form.append('photo', buffer as Buffer, { filename, contentType });
-
-    // Send to Telegram
-    const tgResp = await fetch(telegramApi, {
+    const tgResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
       method: 'POST',
-      body: form as any,
-      headers: form.getHeaders ? form.getHeaders() : undefined,
-      // no signal here; we already handled aborting the download. If you want to abort Telegram send
-      // when client disconnects, you can pass controller.signal here as well.
+      body: form,
     });
 
-    const tgData = await tgResp.json().catch(() => ({ ok: false }));
-    if (!tgResp.ok) {
-      console.error('Telegram API error:', tgData);
-      res.status(502).json({ error: 'Failed to send to Telegram', details: tgData });
-      return;
+    const tgData = await tgResponse.json();
+
+    if (!tgResponse.ok || !tgData.ok) {
+      return res.status(502).json({
+        error: 'Failed to send to Telegram',
+        message: tgData.description,
+      });
     }
 
-    clearTimeout(timeout);
-    console.log('✅ Image successfully sent to Telegram!');
     res.json({ success: true, data: tgData });
-  } catch (err: unknown) {
-    clearTimeout(timeout);
-    const message = err instanceof Error ? err.message : String(err);
-
-    // Distinguish abort errors so logs are clearer
-    if (err instanceof AbortError || /aborted|abort/i.test(message)) {
-      console.warn('Request aborted:', message);
-      // 499 is a common "client closed request" code, but many clients expect 400/408
-      res.status(499).json({ error: 'Request aborted', message });
-      return;
-    }
-
-    console.error('💥 Telegram send error:', message);
-    res.status(400).json({ error: 'Failed to process image', message });
-    return;
+  } catch (error: any) {
+    res.status(400).json({
+      error: 'Failed to process image',
+      message: error.message,
+    });
   }
 });
+
+// --------------------------------------------------
+// 🧱 Serve Angular Static Files
+// --------------------------------------------------
+app.use(
+  express.static(browserDistFolder, {
+    maxAge: '1y',
+    index: false,
+    redirect: false,
+  }),
+);
+
+// --------------------------------------------------
+// 🔁 Angular SSR Fallback
+// --------------------------------------------------
+app.use((req, res, next) => {
+  angularApp
+    .handle(req)
+    .then((response) =>
+      response ? writeResponseToNodeResponse(response, res) : next(),
+    )
+    .catch(next);
+});
+
+// --------------------------------------------------
+// 🚀 Start Server
+// --------------------------------------------------
+if (isMainModule(import.meta.url)) {
+  const port = process.env['PORT'] || 4000;
+  app.listen(port, (error) => {
+    if (error) {
+      throw error;
+    }
+    console.log(`✅ Node Express server listening on http://localhost:${port}`);
+  });
+}
+
+// --------------------------------------------------
+// 🔧 Angular Universal Handler (for dev/build)
+// --------------------------------------------------
+export const reqHandler = createNodeRequestHandler(app);
