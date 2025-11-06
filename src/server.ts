@@ -7,18 +7,16 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
-// --- Telegram Imports ---
 import bodyParser from 'body-parser';
 import mime from 'mime-types';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
 // --------------------------------------------------
-// ⚙️ CONFIGURE YOUR TELEGRAM DETAILS HERE
+// ⚙️ TELEGRAM CONFIG
 // --------------------------------------------------
 const TELEGRAM_BOT_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
 const TELEGRAM_CHAT_ID = '-1003113096788';
-
 // --------------------------------------------------
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
@@ -27,7 +25,6 @@ const angularApp = new AngularNodeAppEngine();
 
 /**
  * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
  */
 app.use(bodyParser.json({ limit: '10mb' }));
 
@@ -37,19 +34,22 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.post('/api/send-to-telegram', async (req, res) => {
   try {
     if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-      return res.status(500).json({
+      res.status(500).json({
         error: 'Server misconfiguration: Telegram credentials missing',
       });
+      return;
     }
 
     const { imageUrl } = req.body;
     if (!imageUrl) {
-      return res.status(400).json({ error: 'Missing imageUrl in request body' });
+      res.status(400).json({ error: 'Missing imageUrl in request body' });
+      return;
     }
 
     const response = await fetch(imageUrl);
     if (!response.ok) {
-      return res.status(400).json({ error: 'Failed to fetch image from provided URL' });
+      res.status(400).json({ error: 'Failed to fetch image from provided URL' });
+      return;
     }
 
     const buffer = Buffer.from(await response.arrayBuffer());
@@ -61,18 +61,26 @@ app.post('/api/send-to-telegram', async (req, res) => {
     form.append('chat_id', TELEGRAM_CHAT_ID);
     form.append('photo', buffer, { filename, contentType });
 
-    const tgResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, {
-      method: 'POST',
-      body: form,
-    });
+    const tgResponse = await fetch(
+      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
+      {
+        method: 'POST',
+        body: form,
+      }
+    );
 
-    const tgData = await tgResponse.json();
+    const tgData = (await tgResponse.json()) as {
+      ok: boolean;
+      description?: string;
+      [key: string]: any;
+    };
 
     if (!tgResponse.ok || !tgData.ok) {
-      return res.status(502).json({
+      res.status(502).json({
         error: 'Failed to send to Telegram',
         message: tgData.description,
       });
+      return;
     }
 
     res.json({ success: true, data: tgData });
@@ -82,6 +90,7 @@ app.post('/api/send-to-telegram', async (req, res) => {
       message: error.message,
     });
   }
+  return; // ✅ ensures all code paths return
 });
 
 // --------------------------------------------------
@@ -113,14 +122,12 @@ app.use((req, res, next) => {
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, (error) => {
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
     console.log(`✅ Node Express server listening on http://localhost:${port}`);
   });
 }
 
 // --------------------------------------------------
-// 🔧 Angular Universal Handler (for dev/build)
+// 🔧 Angular Universal Handler
 // --------------------------------------------------
 export const reqHandler = createNodeRequestHandler(app);
