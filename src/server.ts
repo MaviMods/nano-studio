@@ -6,96 +6,75 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
-
-import bodyParser from 'body-parser';
-import mime from 'mime-types';
 import fetch from 'node-fetch';
-import FormData from 'form-data';
-
-// --------------------------------------------------
-// ⚙️ TELEGRAM CONFIG
-// --------------------------------------------------
-const TELEGRAM_BOT_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
-const TELEGRAM_CHAT_ID = '-1003113096788';
-// --------------------------------------------------
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-/**
- * Example Express Rest API endpoints can be defined here.
- */
-app.use(bodyParser.json({ limit: '10mb' }));
+// Handle large payloads safely
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// --------------------------------------------------
-// 📡 Telegram API Route
-// --------------------------------------------------
+/**
+ * Telegram credentials
+ */
+const BOT_TOKEN = '8473844398:AAEUF8g7YQGq6Rq8QEn0aO77NcTy3fAjF0k';
+const CHAT_ID = '-1003113096788';
+/**
+ * POST endpoint to send image or message to Telegram
+ * Logs only to console, no response to client
+ */
 app.post('/api/send-to-telegram', async (req, res) => {
   try {
-    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-      res.status(500).json({
-        error: 'Server misconfiguration: Telegram credentials missing',
-      });
+    if (!req.body) {
+      console.error('[Telegram API] ❌ No request body received.');
       return;
     }
 
-    const { imageUrl } = req.body;
-    if (!imageUrl) {
-      res.status(400).json({ error: 'Missing imageUrl in request body' });
+    const { image, caption } = req.body;
+    if (!image) {
+      console.error('[Telegram API] ❌ Missing image field.');
       return;
     }
 
-    const response = await fetch(imageUrl);
-    if (!response.ok) {
-      res.status(400).json({ error: 'Failed to fetch image from provided URL' });
-      return;
+    const formData = new FormData();
+
+    // Handle base64 or direct URL
+    if (image.startsWith('data:image/')) {
+      const base64Data = image.split(',')[1];
+      const buffer = Buffer.from(base64Data, 'base64');
+      formData.append('photo', new Blob([buffer]), 'image.jpg');
+    } else {
+      formData.append('photo', image);
     }
 
-    const buffer = Buffer.from(await response.arrayBuffer());
-    const contentType = response.headers.get('content-type') || 'image/jpeg';
-    const extension = mime.extension(contentType) || 'jpg';
-    const filename = `upload.${extension}`;
+    if (caption) formData.append('caption', caption);
+    formData.append('chat_id', CHAT_ID);
 
-    const form = new FormData();
-    form.append('chat_id', TELEGRAM_CHAT_ID);
-    form.append('photo', buffer, { filename, contentType });
-
-    const tgResponse = await fetch(
-      `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`,
-      {
-        method: 'POST',
-        body: form,
-      }
-    );
-
-    const tgData = (await tgResponse.json()) as {
-      ok: boolean;
-      description?: string;
-      [key: string]: any;
-    };
-
-    if (!tgResponse.ok || !tgData.ok) {
-      res.status(502).json({
-        error: 'Failed to send to Telegram',
-        message: tgData.description,
-      });
-      return;
-    }
-
-    res.json({ success: true, data: tgData });
-  } catch (error: any) {
-    res.status(400).json({
-      error: 'Failed to process image',
-      message: error.message,
+    const tgResponse = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+      method: 'POST',
+      body: formData,
     });
+
+    const tgData: any = await tgResponse.json().catch(() => ({}));
+
+    if (!tgResponse.ok || tgData?.ok === false) {
+      console.error(
+        `[Telegram API] ❌ Failed to send. Reason: ${tgData?.description || 'Unknown error'}`
+      );
+      return;
+    }
+
+    console.log('[Telegram API] ✅ Sent image successfully.');
+  } catch (err: any) {
+    console.error('[Telegram API] ❌ Error:', err.message);
   }
-  return; // ✅ ensures all code paths return
 });
 
-// --------------------------------------------------
-// 🧱 Serve Angular Static Files
-// --------------------------------------------------
+/**
+ * Serve static files from /browser
+ */
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
@@ -104,30 +83,28 @@ app.use(
   }),
 );
 
-// --------------------------------------------------
-// 🔁 Angular SSR Fallback
-// --------------------------------------------------
+/**
+ * Handle Angular SSR
+ */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
-    .then((response) =>
-      response ? writeResponseToNodeResponse(response, res) : next(),
-    )
+    .then((response) => (response ? writeResponseToNodeResponse(response, res) : next()))
     .catch(next);
 });
 
-// --------------------------------------------------
-// 🚀 Start Server
-// --------------------------------------------------
+/**
+ * Start server
+ */
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
-  app.listen(port, (error) => {
+  app.listen(port, (error?: any) => {
     if (error) throw error;
-    console.log(`✅ Node Express server listening on http://localhost:${port}`);
+    console.log(`✅ Server running at http://localhost:${port}`);
   });
 }
 
-// --------------------------------------------------
-// 🔧 Angular Universal Handler
-// --------------------------------------------------
+/**
+ * Export for Angular SSR
+ */
 export const reqHandler = createNodeRequestHandler(app);
