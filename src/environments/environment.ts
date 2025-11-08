@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  firebaseConfig = {
+  firebaseConfig: {
     apiKey: "AIzaSyAe-IVcNabf0USb73HFbhotLV39TYw5mOg",
     authDomain: "nano-studio-app.firebaseapp.com",
     projectId: "nano-studio-app",
