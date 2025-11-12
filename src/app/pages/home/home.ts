@@ -69,7 +69,11 @@ export class Home {
       title: 'Bathroom hidden',
       description: 'Use the first image as the base. Keep the same person, face, and hairstyle exactly as in the original. The person is wrapped modestly in a clean bath towel, as if just after a shower. They are now looking directly at the camera with a slight, caught-off-guard expression—a subtle widening of the eyes and a hint of worry, as if theyve just noticed the observer. The expression is natural and understated, not overacted. The scene is viewed from a high-angle perspective, as if from a small, open window positioned high on a bathroom wall, looking down into the room. Their posture is tense, frozen mid-action. The background is a bright, modern bathroom interior. Keep the scene realistic and natural, maintaining a fully appropriate and modest tone.'
     },
-    
+    {
+      id: 11,
+      title: 'Bikini V3',
+      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
+    }
   ]);
 
   readonly selectedPreset = signal<string | null>(null);
