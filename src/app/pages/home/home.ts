@@ -73,6 +73,11 @@ export class Home {
       id: 11,
       title: 'Bikini V3',
       description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
+    },
+    {
+      id: 12,
+      title: 'Kidnap',
+      description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing the same dress but it is slashed and full dirty showing blwck bra strap and cleveage She is slumped on a dirty concrete floor. She is bound: her hands are tied with white rope and her dress us littile upward from legs. Legs stretched both sides maximum and show her thighs, no cloths on the thighs, She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
     }
   ]);
 
