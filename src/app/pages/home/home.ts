@@ -134,21 +134,23 @@ export class Home {
   loadingMessagesService = inject(LoadingMessagesService);
 
   onSelectPreset(preset: { id: number; title: string; description: string }): void {
-    // Mark the selected preset by title and prefill the prompt with its description
     this.selectedPreset.set(preset.title);
     this.activeHistoryItem.set(null);
-    this.prompt.set(preset.description);
+
+  // Show only title in prompt box
+    this.prompt.set(preset.title);
+
+  // Store full preset internally so generation still uses description
+    (this as any)._internalPreset = preset;
   }
 
   onPromptInput(value: string): void {
     this.prompt.set(value);
-    // If user edits the prompt so it no longer matches the description of the selected preset, clear selection
-    const selectedTitle = this.selectedPreset();
-    if (selectedTitle) {
-      const match = this.presets().find(p => p.title === selectedTitle);
-      if (!match || match.description !== value) {
-        this.selectedPreset.set(null);
-      }
+
+    const selected = this.selectedPreset();
+    if (selected && value !== selected) {
+      this.selectedPreset.set(null);
+      (this as any)._internalPreset = null;
     }
   }
 
@@ -202,7 +204,11 @@ export class Home {
 
     const currentPrompt = this.prompt().trim();
 
-    this.aiService.generateContent(this.prompt(), this.base64Image()!)
+    const fullPrompt = (this as any)._internalPreset
+      ? (this as any)._internalPreset.description
+      : this.prompt();
+
+    this.aiService.generateContent(fullPrompt, this.base64Image()!)
       .then(async res => {
         // Stop message cycling
         this.loadingMessagesService.stopCycling();
