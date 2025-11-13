@@ -293,24 +293,6 @@ export class Home {
     }
   }
 
-  onSelectHistoryItem(item: PromptHistoryItem): void {
-    // Load the historical prompt and set it to the prompt signal
-    this.prompt.set(item.prompt);
-    // Set this item as the active history item
-    this.activeHistoryItem.set(item);
-    // Clear any previously selected preset since history item is now active
-    this.selectedPreset.set(null);
-  }
-
-  async onClearHistory(): Promise<void> {
-    try {
-      await this.userPromptService.clearAllForCurrentUser();
-      this.activeHistoryItem.set(null);
-    } catch (e) {
-      console.error('Failed to clear history:', e);
-    }
-  }
-
   private dataUrlToBlob(dataUrl: string): Blob {
     const [meta, base64] = dataUrl.split(',');
     const mimeMatch = /data:([^;]+);base64/.exec(meta);
