@@ -82,7 +82,7 @@ export class Home {
     {
       id: 13,
       title: 'Kidnap Bikini',
-      description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing a light pink triangle-bikini. She is slumped on a dirty concrete floor. She is bound: her hands are tied with white rope. She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
+      description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing a light triangle-bikini. She is slumped on a dirty concrete floor. She is bound: her hands are  with white rope. She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
     },
     {
       id: 14,
