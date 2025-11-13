@@ -78,6 +78,21 @@ export class Home {
       id: 12,
       title: 'Kidnap',
       description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing the same dress but it is slashed and full dirty showing blwck bra strap and cleveage She is slumped on a dirty concrete floor. She is bound: her hands are tied with white rope and her dress us littile upward from legs. Legs stretched both sides maximum and show her thighs, no cloths on the thighs, She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
+    },
+    {
+      id: 13,
+      title: 'Breast Feeding',
+      description: 'The person from my uploaded image sitting comfortably in a soft gray armchair beside a bright window, naturally breastfeeding a baby with gentle, real interaction. She looks directly at the camera with a calm, warm smile. The scene is softly lit by natural daylight, creating a peaceful indoor atmosphere with a softly blurred background. Maintain a realistic photographic tone. Dress her in a colored, modest two-piece outfit inspired by swimwear style, featuring a v-neck top with straps and bottom, designed to look natural and appropriate for a relaxed indoor moment. Keep her face exactly the same as in the uploaded image.'
+    },
+    {
+      id: 14,
+      title: 'Beach Lying',
+      description: 'Create an ultra-realistic 8K HDR image of the person exactly as in the uploaded photo. Preserve her face, expression, body, and proportions precisely—replicate every feature 200% accurately. She is lying on sunlit sand at a vibrant seaside, wearing a yellow-green leaf-pattern bikini with separate top and bottom, with her belly fully visible. Capture her full figure in a close-angle shot, with sunlight reflecting naturally on sand and water. Render highly realistic textures for skin, bikini, sand, and sea. Apply cinematic lighting and shallow depth of field focused on her, maintaining the exact expression, face, and body from the uploaded photo. The scene should be warm, natural, and photo-realistic, with no alterations to her appearance.'
+    },
+    {
+      id: 15,
+      title: 'Train',
+      description: 'Create a hyper-realistic image of the same young woman from the reference photo, keeping her face, expression, and body shape 100% identical. She has porcelain-white skin and expressive eyes, standing in the heat of a crowded Kolkata train car. She has a curvy figure and wears a net saree with a sleeveless blouse. In a natural candid motion, she lifts both hand behind her head to tie her long dark hair into a ponytail, causing the saree pleats to reveal her midriff fully. Her skin glistens with sweat from the humid environment, reflecting realistic moisture on her face, arms, and torso. Capture a confident, triumphant smile as she poses, with men seated behind her. Maintain realistic lighting, textures, and proportions, without altering her face or body.'
     }
   ]);
 
