@@ -217,11 +217,6 @@ export class Home {
         this.loading.set(false);
 
         // Persist prompt to user history via service
-        try {
-          await this.userPromptService.addPrompt(currentPrompt);
-        } catch (e) {
-          console.error('Failed to save prompt history:', e);
-        }
       })
       .catch(error => {
         // Stop message cycling on error as well
