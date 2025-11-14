@@ -22,7 +22,7 @@ export class Home {
     {
       id: 1,
       title: 'Bikini',
-      description: 'Create an ultra-realistic portrait of the same woman from the reference image. Keep her face, expression, shape, and body exactly the same. Dress her in two-piece v neck bikini with straps with separate top and bottom pieces. Keep her midriff and navel naturally visible. Maintain the same pose, lighting, and background as the reference. Emphasize realism, natural skin tone, accurate proportions, and detailed texture while ensuring the overall look remains elegant and lifelike.'
+      description: 'Ultra-realistic portrait, maintaining the woman face, expression, body, pose, lighting, and background from the reference image with strict adherence. Do not alter her face or background. She is wearing a matching triangle bikini top and bottom (no full pants). Her midriff and navel are naturally visible. Focus on photorealistic skin texture and accurate proportions, ensuring the entire result is elegant and lifelike.'
     },
     {
       id: 2,
