@@ -20,16 +20,17 @@
           type="file"
           class="input"
           accept="image/png,image/jpeg"
-          (change)="onFileChange(fileInput.files)"
+          multiple
+          (change)="onFilesChange(fileInput.files)"
         />
-        <p id="upload-help" class="text-sm text-muted">Best results with clear, well-lit product images.</p>
 
-        @if (filePreviewUrl()) {
-          <div class="preview">
-            <img [src]="filePreviewUrl()!" alt="Uploaded product preview" />
+        @if (filePreviewUrls().length > 0) {
+          <div class="preview-list">
+            <div class="preview" *ngFor="let img of filePreviewUrls()">
+              <img [src]="img" alt="Uploaded preview" />
+            </div>
           </div>
         }
-      </div>
 
       <div class="section">
         <label for="prompt" class="fw-semibold">Describe the vibe</label>
