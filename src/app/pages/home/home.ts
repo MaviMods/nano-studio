@@ -109,10 +109,10 @@ export class Home {
 
   // User input state
   readonly prompt = signal<string>('');
-  readonly file = signal<File | null>(null);
-  readonly filePreviewUrl = signal<string | null>(null);
+  readonly files = signal<File[]>([]);
+  readonly filePreviewUrls = signal<string[]>([]);
+  readonly base64Images = signal<string[]>([]);
 
-  base64Image= signal<string | null>(null);
 
   // Generation state
   readonly loading = signal<boolean>(false);
@@ -159,34 +159,35 @@ export class Home {
     }
   }
 
-  onFileChange(fileList: FileList | null): void {
-    const file = fileList && fileList.length ? fileList.item(0) : null;
-    if (!file) {
-      this.clearFile();
+  onFilesChange(fileList: FileList | null): void {
+    if (!fileList || fileList.length === 0) {
+      this.clearFiles();
       return;
     }
-    const type = file.type.toLowerCase();
-    const isValid = type === 'image/jpeg' || type === 'image/png' || type === 'image/jpg';
-    if (!isValid) {
-      this.clearFile();
-      alert('Please upload a JPG or PNG image.');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      // Extract the base64 data part (after 'data:image/jpeg;base64,')
-      const dataPart = base64.split(',')[1];
-      this.base64Image.set(dataPart)
+
+    const validFiles: File[] = [];
+    const previews: string[] = [];
+
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList.item(i);
+      if (!file) continue;
+
+      const type = file.type.toLowerCase();
+      if (type === 'image/jpeg' || type === 'image/png' || type === 'image/jpg') {
+        validFiles.push(file);
+        previews.push(URL.createObjectURL(file));
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = (reader.result as string).split(',')[1];
+          this.base64Images.update(arr => [...arr, base64]);
+        };
+        reader.readAsDataURL(file);
+      }
     }
 
-    reader.readAsDataURL(file);
-
-    // Create preview URL (SSR-safe)
-    if (typeof window !== 'undefined' && 'URL' in window) {
-      const url = URL.createObjectURL(file);
-      this.filePreviewUrl.set(url);
-    }
+    this.files.set(validFiles);
+    this.filePreviewUrls.set(previews);
   }
 
   private clearFile(): void {
