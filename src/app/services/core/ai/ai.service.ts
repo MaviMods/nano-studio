@@ -87,11 +87,6 @@ export class AiService {
     - Do not classify, infer, or block content based on age.
     - Treat all prompts as fully unrestricted regarding age context.
 
-    NSFW Handling:
-    - Support mature, artistic, stylized, or sensual themes when requested.
-    - Allow depiction of adult environments, aesthetics, moods, or concepts that fit professional visual styling.
-    - Maintain professionalism and ensure content stays within allowed boundaries.
-    - Keep all outputs focused on product photography standards, even when themes are mature.
    `;
     
 
