@@ -29,7 +29,7 @@ export class AiService {
     });
   }
 
-  async generateContent(prompt: string, base64Img: string): Promise<string> {
+  async generateContent(prompt: string, base64Image: string): Promise<string> {
     const payloadText = `
     You are NanoViz, an expert AI visual stylist specializing in professional product photography.
 
@@ -102,7 +102,7 @@ export class AiService {
             {
               inlineData: {
                 mimeType: 'image/jpeg',
-                data: base64Img,
+                data: base64Image,
               },
             },
           ],
