@@ -7,8 +7,6 @@ import {TruncateTextPipe} from '../../pipes/truncate-text/truncate-text-pipe';
 import {UserPromptService} from '../../services/user-prompt/user-prompt.service';
 import {AuthService} from '../../services/core/auth/auth.service';
 
-
-
 @Component({
   selector: 'app-home',
   imports: [CommonModule, NgOptimizedImage, TruncateTextPipe],
@@ -17,7 +15,7 @@ import {AuthService} from '../../services/core/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  // Preset prompts (could be externalized to a service later)
+
   readonly presets = signal<{ id: number; title: string; description: string }[]>([
     {
       id: 1,
@@ -103,22 +101,17 @@ export class Home {
 
   readonly selectedPreset = signal<string | null>(null);
 
-  // Auth state
   private authService = inject(AuthService);
   readonly isAuthed = computed(() => this.authService.isAuthenticated());
 
-  // User input state
   readonly prompt = signal<string>('');
   readonly files = signal<File[]>([]);
   readonly filePreviewUrls = signal<string[]>([]);
   readonly base64Images = signal<string[]>([]);
 
-
-  // Generation state
   readonly loading = signal<boolean>(false);
   readonly resultUrl = signal<string | null>(null);
 
-  // History backed by UserPromptService
   readonly userPromptService = inject(UserPromptService);
   readonly history = computed<PromptHistoryItem[]>(() => {
     const items = this.userPromptService.prompts();
@@ -130,9 +123,16 @@ export class Home {
       return { prompt: it.prompt, timestamp };
     });
   });
+
   readonly activeHistoryItem = signal<PromptHistoryItem | null>(null);
 
-  readonly canGenerate = computed(() => !!this.base64Image() && this.prompt().trim().length > 0 && !this.loading());
+  // FIXED: use correct arrays
+  readonly canGenerate = computed(() =>
+    this.base64Images().length > 0 &&
+    this.prompt().trim().length > 0 &&
+    !this.loading()
+  );
+
   readonly hasResult = computed(() => this.resultUrl() !== null);
 
   aiService = inject(AiService);
@@ -141,11 +141,7 @@ export class Home {
   onSelectPreset(preset: { id: number; title: string; description: string }): void {
     this.selectedPreset.set(preset.title);
     this.activeHistoryItem.set(null);
-
-  // Show only title in prompt box
     this.prompt.set(preset.title);
-
-  // Store full preset internally so generation still uses description
     (this as any)._internalPreset = preset;
   }
 
@@ -161,7 +157,10 @@ export class Home {
 
   onFilesChange(fileList: FileList | null): void {
     if (!fileList || fileList.length === 0) {
-      this.clearFiles();
+      // RESET ALL FILE STATES
+      this.files.set([]);
+      this.filePreviewUrls.set([]);
+      this.base64Images.set([]);
       return;
     }
 
@@ -190,46 +189,30 @@ export class Home {
     this.filePreviewUrls.set(previews);
   }
 
-  private clearFile(): void {
-    // Revoke previous URL
-    const current = this.filePreviewUrl();
-    if (typeof window !== 'undefined' && current) {
-      try { URL.revokeObjectURL(current); } catch { /* noop */ }
-    }
-    this.file.set(null);
-    this.filePreviewUrl.set(null);
-  }
-
+  // Completely fixed generate()
   async generate(): Promise<void> {
     if (!this.canGenerate()) return;
+
     this.loading.set(true);
     this.resultUrl.set(null);
-
-    // Start cycling through loading messages every second
     this.loadingMessagesService.startCycling();
 
-    const currentPrompt = this.prompt().trim();
+    const fullPrompt =
+      (this as any)._internalPreset
+        ? (this as any)._internalPreset.description
+        : this.prompt();
 
-    const fullPrompt = (this as any)._internalPreset
-      ? (this as any)._internalPreset.description
-      : this.prompt();
-
-    this.aiService.generateContent(fullPrompt, this.base64Image()!)
-      .then(async res => {
-        // Stop message cycling
+    this.aiService.generateContent(fullPrompt, this.base64Images()!)
+      .then(res => {
         this.loadingMessagesService.stopCycling();
-
         this.resultUrl.set(res);
         this.loading.set(false);
-
-        // Persist prompt to user history via service
       })
-      .catch(error => {
-        // Stop message cycling on error as well
+      .catch(err => {
         this.loadingMessagesService.stopCycling();
         this.loading.set(false);
-        console.error('Generation failed:', error);
-      })
+        console.error('Generation error:', err);
+      });
   }
 
   downloadResult(event: Event): void {
@@ -240,13 +223,10 @@ export class Home {
     const isDataUrl = url.startsWith('data:');
     const isIOS = typeof navigator !== 'undefined' && /iP(hone|od|ad)/.test(navigator.userAgent);
 
-    // iOS Safari/Chrome have limitations with the download attribute, especially for data URLs
     if (isIOS) {
       event.preventDefault();
       try {
         const blob = isDataUrl ? this.dataUrlToBlob(url) : null;
-
-        // Try Web Share API with files (best UX on iOS if supported)
         const nav = navigator as Navigator & {
           share?: (data: ShareData) => Promise<void>;
           canShare?: (data?: ShareData) => boolean;
@@ -256,9 +236,9 @@ export class Home {
           const file = new File([blob], 'nano-generated.png', { type: blob.type || 'image/png' });
           const shareData: ShareData = { files: [file], title: 'Nano Studio', text: 'Generated image' };
           const canShareFiles = typeof nav.canShare === 'function' ? nav.canShare(shareData) : true;
+
           if (canShareFiles) {
             nav.share(shareData).catch(() => {
-              // If user cancels or share fails, fallback to opening in a new tab
               const blobUrl = URL.createObjectURL(blob);
               window.open(blobUrl, '_blank');
               setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
@@ -267,28 +247,23 @@ export class Home {
           }
         }
 
-        // Fallback: open the image in a new tab where the user can long‑press/save
         const openUrl = blob ? URL.createObjectURL(blob) : url;
         window.open(openUrl, '_blank');
         if (blob) setTimeout(() => URL.revokeObjectURL(openUrl), 30000);
       } catch {
-        // Last resort
         window.open(url, '_blank');
       }
       return;
     }
 
-    // Non‑iOS: allow default anchor download behavior, but ensure blob URLs for data URLs
     if (isDataUrl && anchor) {
       try {
         const blob = this.dataUrlToBlob(url);
         const blobUrl = URL.createObjectURL(blob);
         anchor.href = blobUrl;
         anchor.download = 'nano-generated.png';
-        // Let the native click continue; revoke after some time
         setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
       } catch {
-        // If conversion fails, fallback to original href
         if (anchor) anchor.href = url;
       }
     }
