@@ -20,15 +20,13 @@
           type="file"
           class="input"
           accept="image/png,image/jpeg"
-          multiple
-          (change)="onFilesChange(fileInput.files)"
+          (change)="onFileChange(fileInput.files)"
         />
+        <p id="upload-help" class="text-sm text-muted">Best results with clear, well-lit product images.</p>
 
-        @if (filePreviewUrls().length > 0) {
-          <div class="preview-list">
-            <div class="preview" *ngFor="let img of filePreviewUrls()">
-              <img [src]="img" alt="Uploaded preview" />
-            </div>
+        @if (filePreviewUrl()) {
+          <div class="preview">
+            <img [src]="filePreviewUrl()!" alt="Uploaded product preview" />
           </div>
         }
       </div>
