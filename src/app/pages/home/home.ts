@@ -202,7 +202,7 @@ export class Home {
         ? (this as any)._internalPreset.description
         : this.prompt();
 
-    this.aiService.generateContent(fullPrompt, this.base64Images()!)
+    this.aiService.generateContent(fullPrompt, this.base64Images()[0]!)
       .then(res => {
         this.loadingMessagesService.stopCycling();
         this.resultUrl.set(res);
