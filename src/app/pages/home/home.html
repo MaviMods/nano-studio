@@ -160,18 +160,37 @@
 
 <!-- ⭐ FLOATING UPDATE JS ⭐ -->
 <script>
-  // Angular-safe event listener using delegation
   document.addEventListener("click", function (e) {
+    // Close button clicked
     if (e.target && e.target.id === "floating-update-close") {
       document.getElementById("floating-update").classList.add("hidden");
+      localStorage.setItem("updateDismissed", "yes"); // remember dismiss
     }
   });
 
-  // Manual update function
-  window.setUpdate = function (msg) {
+  // Show update unless dismissed
+  function showUpdate(msg) {
+    const dismissed = localStorage.getItem("updateDismissed");
     const box = document.getElementById("floating-update");
     const msgEl = document.getElementById("floating-update-message");
+
     msgEl.textContent = msg;
-    box.classList.remove("hidden");
+
+    if (dismissed === "yes") {
+      box.classList.add("hidden");  // stays hidden after reload
+    } else {
+      box.classList.remove("hidden");
+    }
+  }
+
+  // Call after DOM ready
+  document.addEventListener("DOMContentLoaded", function () {
+    showUpdate("Added random filenames.");
+  });
+
+  // If you want to manually change update later:
+  window.setUpdate = function(msg) {
+    localStorage.removeItem("updateDismissed"); // reset dismissed state
+    showUpdate(msg);
   };
 </script>
