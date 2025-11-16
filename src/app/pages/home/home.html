@@ -86,7 +86,7 @@
           <a
             class="btn btn-secondary"
             [href]="resultUrl()!"
-            download="nano-generated.png"
+            [attr.download]="randomName"
             (click)="downloadResult($event)"
           >Download</a>
         </div>
