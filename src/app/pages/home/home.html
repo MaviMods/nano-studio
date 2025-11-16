@@ -160,11 +160,10 @@
 
 <!-- ⭐ FLOATING UPDATE JS ⭐ -->
 <script>
-(function () {
-  // initial message shown on page load
+window.onload = function () {
+
   const INITIAL_MESSAGE = "Added random filenames.";
 
-  // --- simple hash to create a stable localStorage key per message ---
   function hashString(s) {
     let h = 2166136261 >>> 0;
     for (let i = 0; i < s.length; i++) {
@@ -173,120 +172,54 @@
     }
     return (h >>> 0).toString(36);
   }
-  const LS_PREFIX = "floatingUpdate_v1:";
 
-  function keyForMessage(msg) {
-    return LS_PREFIX + hashString(String(msg || ""));
-  }
+  function key(msg) { return "floatingUpdate:" + hashString(msg); }
+
   function isDismissed(msg) {
-    try { return localStorage.getItem(keyForMessage(msg)) === "1"; } catch(e){ return false; }
+    return localStorage.getItem(key(msg)) === "1";
   }
+
   function setDismissed(msg) {
-    try { localStorage.setItem(keyForMessage(msg), "1"); } catch(e) {}
-  }
-  function clearDismissed(msg) {
-    try { localStorage.removeItem(keyForMessage(msg)); } catch(e) {}
+    localStorage.setItem(key(msg), "1");
   }
 
-  // Query elements (may return null if Angular hasn't rendered yet)
-  function els() {
-    return {
-      box: document.getElementById("floating-update"),
-      closeBtn: document.getElementById("floating-update-close"),
-      msgEl: document.getElementById("floating-update-message")
-    };
-  }
+  function showMessage(msg) {
+    const box = document.getElementById("floating-update");
+    const txt = document.getElementById("floating-update-message");
 
-  // Apply visibility & text when we have elements
-  function apply(box, msgEl, message) {
-    if (!box || !msgEl) return;
-    msgEl.textContent = message;
-    box.dataset.currentMessage = message;
-    if (isDismissed(message)) {
+    if (!box || !txt) return;
+
+    txt.textContent = msg;
+    box.dataset.message = msg;
+
+    if (isDismissed(msg)) {
       box.classList.add("hidden");
-      box.setAttribute("aria-hidden", "true");
     } else {
       box.classList.remove("hidden");
-      box.setAttribute("aria-hidden", "false");
     }
   }
 
-  // Public function to set an update message (call from your Angular code)
-  window.setUpdate = function (message) {
-    if (typeof message !== "string") return;
-    // When showing a new message, clear any existing dismissal for that message
-    clearDismissed(message);
-    const { box, msgEl } = els();
-    if (box && msgEl) {
-      apply(box, msgEl, message);
-    } else {
-      // store pending message - will be applied when element appears
-      window.__pendingFloatingUpdateMessage = message;
-    }
-  };
-
-  // Delegated click handler (works even if Angular replaces nodes)
+  // Attach close handler (delegated)
   document.addEventListener("click", function (e) {
-    const target = e.target;
-    if (target && (target.id === "floating-update-close" || target.closest && target.closest("#floating-update-close"))) {
-      const { box } = els();
+    if (e.target.id === "floating-update-close") {
+
+      const box = document.getElementById("floating-update");
       if (!box) return;
-      const cur = box.dataset.currentMessage || INITIAL_MESSAGE;
-      setDismissed(cur);           // persist dismissal for this exact message
+
+      const msg = box.dataset.message || INITIAL_MESSAGE;
+      setDismissed(msg);
+
       box.classList.add("hidden");
-      box.setAttribute("aria-hidden", "true");
     }
-  }, true);
+  });
 
-  // Try to apply initial/pending message to the element; if not present yet, observe DOM
-  function ensureApplied() {
-    const pending = window.__pendingFloatingUpdateMessage;
-    const messageToUse = (pending !== undefined ? pending : INITIAL_MESSAGE);
-    const { box, msgEl } = els();
-    if (box && msgEl) {
-      apply(box, msgEl, messageToUse);
-      return true;
-    }
-    return false;
-  }
-
-  // Set up MutationObserver to wait for Angular to render the floating node
-  let observer;
-  function waitForElementAndApply() {
-    if (ensureApplied()) return; // already present
-    if (observer) return; // already observing
-
-    observer = new MutationObserver((mutations, obs) => {
-      if (ensureApplied()) {
-        obs.disconnect();
-        observer = null;
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    // safety retries in case Angular mounts later
-    setTimeout(() => { if (observer) { ensureApplied(); } }, 300);
-    setTimeout(() => { if (observer) { ensureApplied(); } }, 1200);
-  }
-
-  // On load attempt to apply (works if Angular already rendered)
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", waitForElementAndApply);
-  } else {
-    waitForElementAndApply();
-  }
-
-  // Expose small debug helper (optional)
-  window.__floatingUpdate_debug = {
-    isDismissed,
-    setDismissed,
-    clearDismissed,
-    keyForMessage,
-    pending: () => window.__pendingFloatingUpdateMessage
+  // Global setter if you want to update message later
+  window.setUpdate = function (msg) {
+    localStorage.removeItem(key(msg));
+    showMessage(msg);
   };
 
-  // Initialize pending message variable so setUpdate from other code can overwrite it
-  if (window.__pendingFloatingUpdateMessage === undefined) {
-    window.__pendingFloatingUpdateMessage = undefined;
-  }
-})();
+  // Finally show initial message
+  showMessage(INITIAL_MESSAGE);
+};
 </script>
