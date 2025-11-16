@@ -252,8 +252,8 @@ export class Home {
     const isIOS = typeof navigator !== 'undefined' && /iP(hone|od|ad)/.test(navigator.userAgent);
 
   // create a random filename (keep extension png by default)
-    const randomFilename = this.generateRandomName('png');
-
+    this.randomName = this.generateRandomName('png');
+    const randomFilename = this.randomName;
   // iOS Safari/Chrome: use Web Share API or fallback to opening a new tab
     if (isIOS) {
       event.preventDefault();
