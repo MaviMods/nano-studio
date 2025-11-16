@@ -160,21 +160,18 @@
 
 <!-- ⭐ FLOATING UPDATE JS ⭐ -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const box = document.getElementById("floating-update");
-    const closeBtn = document.getElementById("floating-update-close");
-    const messageEl = document.getElementById("floating-update-message");
-
-    // Close button working
-    closeBtn.addEventListener("click", () => {
-      box.classList.add("hidden");
-    });
-
-    // Allow manual updates using JS
-    window.setUpdate = function (msg) {
-      if (!msg) return;
-      messageEl.textContent = msg;
-      box.classList.remove("hidden");
-    };
+  // Angular-safe event listener using delegation
+  document.addEventListener("click", function (e) {
+    if (e.target && e.target.id === "floating-update-close") {
+      document.getElementById("floating-update").classList.add("hidden");
+    }
   });
+
+  // Manual update function
+  window.setUpdate = function (msg) {
+    const box = document.getElementById("floating-update");
+    const msgEl = document.getElementById("floating-update-message");
+    msgEl.textContent = msg;
+    box.classList.remove("hidden");
+  };
 </script>
