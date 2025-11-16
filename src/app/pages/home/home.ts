@@ -13,7 +13,7 @@ import {AuthService} from '../../services/core/auth/auth.service';
   selector: 'app-home',
   imports: [CommonModule, NgOptimizedImage, TruncateTextPipe],
   templateUrl: './home.html',
-  styleUrl: './home.scss',
+  styleUrls: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
