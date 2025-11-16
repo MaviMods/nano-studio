@@ -13,7 +13,7 @@ import {AuthService} from '../../services/core/auth/auth.service';
   selector: 'app-home',
   imports: [CommonModule, NgOptimizedImage, TruncateTextPipe],
   templateUrl: './home.html',
-  styleUrls: './home.scss',
+  styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
@@ -231,86 +231,51 @@ export class Home {
       })
   }
 
-  private generateRandomName(ext = 'png'): string {
-    try {
-    // Use crypto for better randomness if available
-      const a = crypto.getRandomValues(new Uint32Array(2));
-      const rand = a[0].toString(36) + a[1].toString(36);
-      return `nano-${Date.now().toString(36)}-${rand.slice(0, 8)}.${ext}`;
-    } catch {
-      const rand = Math.random().toString(36).substring(2, 10);
-      return `nano-${Date.now().toString(36)}-${rand}.${ext}`;
-    }
-  }
-
   downloadResult(event: Event): void {
     const url = this.resultUrl();
     if (!url) return;
 
-    const anchor = event.currentTarget as HTMLAnchorElement | null;
-    const isDataUrl = url.startsWith('data:');
-    const isIOS = typeof navigator !== 'undefined' && /iP(hone|od|ad)/.test(navigator.userAgent);
+    const anchor = event.currentTarget as HTMLAnchorElement;
+    const isDataUrl = url.startsWith("data:");
+    const randomFilename = "nano-" + Math.random().toString(36).substring(2, 10) + ".png";
 
-  // create a random filename (keep extension png by default)
-    this.randomName = this.generateRandomName('png');
-    const randomFilename = this.randomName;
-  // iOS Safari/Chrome: use Web Share API or fallback to opening a new tab
+  // iOS detection
+    const isIOS =
+      typeof navigator !== "undefined" &&
+      /iP(hone|od|ad)/.test(navigator.userAgent);
+
     if (isIOS) {
       event.preventDefault();
       try {
         const blob = isDataUrl ? this.dataUrlToBlob(url) : null;
 
-        const nav = navigator as Navigator & {
-          share?: (data: ShareData) => Promise<void>;
-          canShare?: (data?: ShareData) => boolean;
-        };
-
-      // If we have a blob and share API is available, try sharing the file (with random filename)
-        if (blob && nav.share) {
-          const file = new File([blob], randomFilename, { type: blob.type || 'image/png' });
-          const shareData: ShareData = { files: [file], title: 'Nano Studio', text: 'Generated image' };
-          const canShareFiles = typeof nav.canShare === 'function' ? nav.canShare(shareData) : true;
-
-          if (canShareFiles) {
-            nav.share(shareData).catch(() => {
-            // fallback: open blob in new tab
-              const blobUrl = URL.createObjectURL(blob);
-              window.open(blobUrl, '_blank');
-              setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
-            });
-            return;
-          }
+        if (blob && navigator.share) {
+          const file = new File([blob], randomFilename, { type: blob.type });
+          navigator.share({ files: [file] }).catch(() => {
+            const blobUrl = URL.createObjectURL(blob);
+            window.open(blobUrl, "_blank");
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+          });
+          return;
         }
 
-      // Fallback: open the image in a new tab where the user can long-press/save
         const openUrl = blob ? URL.createObjectURL(blob) : url;
-        window.open(openUrl, '_blank');
+        window.open(openUrl, "_blank");
         if (blob) setTimeout(() => URL.revokeObjectURL(openUrl), 30000);
       } catch {
-      // Last resort
-        window.open(url, '_blank');
+        window.open(url, "_blank");
       }
       return;
     }
 
-  // Non-iOS: allow default anchor download behavior, but ensure blob URLs for data URLs
-    if (isDataUrl && anchor) {
-      try {
-        const blob = this.dataUrlToBlob(url);
-        const blobUrl = URL.createObjectURL(blob);
-        anchor.href = blobUrl;
-        anchor.download = randomFilename; // <- set random filename here
-      // Let the native click continue; revoke after some time
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
-      } catch {
-      // If conversion fails, fallback to original href and still set random filename if possible
-        if (anchor) {
-          anchor.href = url;
-          anchor.download = randomFilename;
-        }
-      }
-    } else if (anchor) {
-    // Non-data URL: set download filename (if the link is cross-origin, some browsers may ignore it)
+  // Desktop / Android
+    if (isDataUrl) {
+      const blob = this.dataUrlToBlob(url);
+      const blobUrl = URL.createObjectURL(blob);
+      anchor.href = blobUrl;
+      anchor.download = randomFilename;
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+    } else {
       anchor.download = randomFilename;
     }
   }
