@@ -10,13 +10,14 @@
     </p>
   </header>
 
+  <!-- ⭐ FLOATING UPDATE BOX ⭐ -->
   <div id="floating-update" class="floating-update" role="status" aria-live="polite" aria-atomic="true">
+    <button id="floating-update-close" class="floating-update__close" aria-label="Dismiss update">✕</button>
     <div class="floating-update__content">
-      <strong id="floating-update-title" class="fw-semibold">Update</strong>
-      <span id="floating-update-message" class="floating-update__message">Added random filenames.</span>
-    </div>
-    <div class="floating-update__actions">
-      <button id="floating-update-close" class="btn btn-ghost" aria-label="Dismiss update">✕</button>
+      <strong class="fw-semibold">Update</strong>
+      <span id="floating-update-message" class="floating-update__message">
+        Added random filenames.
+      </span>
     </div>
   </div>
 
@@ -93,22 +94,87 @@
           <img [src]="resultUrl()!" alt="Generated image result" />
         </div>
         <div class="section">
-          <a
-            class="btn btn-secondary"
-            [href]="resultUrl()!"
-            (click)="downloadResult($event)"
-          >Download</a>
+          <a class="btn btn-secondary" [href]="resultUrl()!" (click)="downloadResult($event)">Download</a>
         </div>
       } @else {
         <p class="text-sm text-muted">Your generated image will appear here.</p>
       }
-
-      
     </div>
   </div>
 
   <div class="footer text-muted">
     Made with ❤️ by <a href="https://github.com" target="_blank" rel="noopener">Saint</a>
   </div>
-
 </section>
+
+<!-- ⭐ FLOATING UPDATE CSS ⭐ -->
+<style>
+  .floating-update {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    padding: 12px 18px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: opacity 220ms ease;
+  }
+
+  .floating-update.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .floating-update__content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .floating-update__message {
+    white-space: nowrap;
+    max-width: 260px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .floating-update__close {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 15px;
+  }
+</style>
+
+<!-- ⭐ FLOATING UPDATE JS ⭐ -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const box = document.getElementById("floating-update");
+    const closeBtn = document.getElementById("floating-update-close");
+    const messageEl = document.getElementById("floating-update-message");
+
+    // Close button working
+    closeBtn.addEventListener("click", () => {
+      box.classList.add("hidden");
+    });
+
+    // Allow manual updates using JS
+    window.setUpdate = function (msg) {
+      if (!msg) return;
+      messageEl.textContent = msg;
+      box.classList.remove("hidden");
+    };
+  });
+</script>
