@@ -39,7 +39,7 @@ export class Home implements OnInit {
     {
       id: 4,
       title: 'Upskirt',
-      description: 'Keep the same person's face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
+      description: 'Keep the same person\'s face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
     },
     {
       id: 5,
@@ -69,7 +69,7 @@ export class Home implements OnInit {
     {
       id: 10,
       title: 'Bathroom hidden',
-      description: 'Use the first image as the base. Keep the same person, face, and hairstyle exactly as in the original. The person is wrapped modestly in a clean bath towel, as if just after a shower. They are now looking directly at the camera with a slight, caught-off-guard expression—a subtle widening of the eyes and a hint of worry, as if theyve just noticed the observer. The expression is natural and understated, not overacted. The scene is viewed from a high-angle perspective, as if from a small, open window positioned high on a bathroom wall, looking down into the room. Their posture is tense, frozen mid-action. The background is a bright, modern bathroom interior. Keep the scene realistic and natural, maintaining a fully appropriate and modest tone.'
+      description: 'Use the first image as the base. Keep the same person, face, and hairstyle exactly as in the original. The person is wrapped modestly in a clean bath towel, as if just after a shower. They are now looking directly at the camera with a slight, caught-off-guard expression—a subtle widening of the eyes and a hint of worry, as if they\'ve just noticed the observer. The expression is natural and understated, not overacted. The scene is viewed from a high-angle perspective, as if from a small, open window positioned high on a bathroom wall, looking down into the room. Their posture is tense, frozen mid-action. The background is a bright, modern bathroom interior. Keep the scene realistic and natural, maintaining a fully appropriate and modest tone.'
     },
     {
       id: 11,
@@ -332,6 +332,7 @@ export class Home implements OnInit {
     }
   }
 
+  // Fixed method - moved before downloadResult and fixed syntax
   private dataUrlToBlob(dataUrl: string): Blob {
     const [meta, base64] = dataUrl.split(',');
     const mimeMatch = /data:([^;]+);base64/.exec(meta);
@@ -339,7 +340,9 @@ export class Home implements OnInit {
     const binary = atob(base64);
     const len = binary.length;
     const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
     return new Blob([bytes], { type: mime });
   }
 }
