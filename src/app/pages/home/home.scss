@@ -2,6 +2,49 @@
   display: block;
 }
 
+.floating-update {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  padding: 12px 18px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: opacity 220ms ease;
+}
+
+.floating-update__content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.floating-update__message {
+  white-space: nowrap;
+  max-width: 260px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.floating-update__close {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  font-size: 15px;
+}
+
 .page {
   padding-block: var(--space-2);
 
