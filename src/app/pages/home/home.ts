@@ -17,7 +17,7 @@ import {AuthService} from '../../services/core/auth/auth.service';
 export class Home implements OnInit {
   // Floating update signals
   readonly showFloatingUpdate = signal<boolean>(true);
-  readonly floatingUpdateMessage = signal<string>('Added random download filenames.');
+  readonly floatingUpdateMessage = signal<string>('Dont try real girl image');
 
   // Preset prompts (could be externalized to a service later)
   readonly presets = signal<{ id: number; title: string; description: string }[]>([
