@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal, OnInit} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {PromptHistoryItem} from '../../models/prompt.model';
 import {AiService} from '../../services/core/ai/ai.service';
@@ -7,8 +7,6 @@ import {TruncateTextPipe} from '../../pipes/truncate-text/truncate-text-pipe';
 import {UserPromptService} from '../../services/user-prompt/user-prompt.service';
 import {AuthService} from '../../services/core/auth/auth.service';
 
-
-
 @Component({
   selector: 'app-home',
   imports: [CommonModule, NgOptimizedImage, TruncateTextPipe],
@@ -16,7 +14,11 @@ import {AuthService} from '../../services/core/auth/auth.service';
   styleUrl: './home.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Home {
+export class Home implements OnInit {
+  // Floating update signals
+  readonly showFloatingUpdate = signal<boolean>(true);
+  readonly floatingUpdateMessage = signal<string>('Added random filenames.');
+
   // Preset prompts (could be externalized to a service later)
   readonly presets = signal<{ id: number; title: string; description: string }[]>([
     {
@@ -37,7 +39,7 @@ export class Home {
     {
       id: 4,
       title: 'Upskirt',
-      description: 'Keep the same person’s face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
+      description: 'Keep the same person's face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
     },
     {
       id: 5,
@@ -137,6 +139,56 @@ export class Home {
 
   aiService = inject(AiService);
   loadingMessagesService = inject(LoadingMessagesService);
+
+  ngOnInit() {
+    this.checkFloatingUpdateDismissed();
+  }
+
+  // Floating update methods
+  dismissFloatingUpdate() {
+    this.showFloatingUpdate.set(false);
+    // Save dismissal to localStorage with message hash
+    try {
+      const message = this.floatingUpdateMessage();
+      const key = `floatingUpdate_v2:${this.hashMessage(message)}`;
+      localStorage.setItem(key, '1');
+    } catch (e) {
+      console.warn('Could not access localStorage');
+    }
+  }
+
+  private checkFloatingUpdateDismissed() {
+    try {
+      const message = this.floatingUpdateMessage();
+      const key = `floatingUpdate_v2:${this.hashMessage(message)}`;
+      const isDismissed = localStorage.getItem(key);
+      this.showFloatingUpdate.set(!isDismissed);
+    } catch (e) {
+      console.warn('Could not access localStorage');
+    }
+  }
+
+  private hashMessage(message: string): string {
+    let hash = 2166136261 >>> 0;
+    for (let i = 0; i < message.length; i++) {
+      hash ^= message.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+  }
+
+  // Optional: Method to update the floating message from elsewhere
+  setFloatingUpdate(message: string) {
+    this.floatingUpdateMessage.set(message);
+    // Clear the dismissal for this new message
+    try {
+      const key = `floatingUpdate_v2:${this.hashMessage(message)}`;
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.warn('Could not access localStorage');
+    }
+    this.showFloatingUpdate.set(true);
+  }
 
   onSelectPreset(preset: { id: number; title: string; description: string }): void {
     this.selectedPreset.set(preset.title);
