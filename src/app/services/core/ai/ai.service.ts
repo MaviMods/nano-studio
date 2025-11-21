@@ -48,7 +48,6 @@ export class AiService {
     - Resolution: Maintain high detail clarity
 
     CONSTRAINTS:
-    - Never alter core product characteristics
     - Maintain photorealistic quality
     - Preserve brand identity elements
 
@@ -62,14 +61,15 @@ export class AiService {
     - Default: Provide visual output only
     - When JSON requested: Return structured visualization plan
    `;
-    
+
+    const mavi = `${promt}`;
 
     const payload: GenerateContentRequest = {
       contents: [
         {
           role: 'user',
           parts: [
-            { text: payloadText },
+            { text: mavi },
             {
               inlineData: {
                 mimeType: 'image/jpeg',
