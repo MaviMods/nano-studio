@@ -62,7 +62,7 @@ export class AiService {
     - When JSON requested: Return structured visualization plan
    `;
 
-    const mavi = `${promt}`;
+    const mavi = `${prompt}`;
 
     const payload: GenerateContentRequest = {
       contents: [
