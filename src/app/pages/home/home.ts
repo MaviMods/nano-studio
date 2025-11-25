@@ -28,23 +28,23 @@ export class Home implements OnInit {
     },
     {
       id: 2,
-      title: 'Bikini Dance',
-      description: 'Keep the exact same face, facial features, expression, and hairstyle as in the reference image with no changes. Place her on a beach in natural daylight, wearing a full two-piece bikini. She performs a graceful classical dance pose, looking directly at the camera. Her hands are empty. Use a medium shot, not a long shot, with realistic lighting and natural details.'
+      title: 'Bikini V2',
+      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
     },
     {
       id: 3,
-      title: 'Bikini New',
-      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not modify any face, facial expression, lips, makeup, hair, or body shape. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded gathered cups joined by a small central ring. Thin straps tie around the neck and wrap around the torso, forming a multi-strap cut-out pattern. Add a sheer lightweight sarong or wrap skirt tied on the right hip with a bow, made of transparent fabric with a subtle floral or swirling abstract pattern, falling to mid-thigh. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
+      title: 'Beach Lying',
+      description: 'Create an ultra-realistic 8K HDR image of the person exactly as in the uploaded photo. Preserve her face, expression, body, and proportions precisely—replicate every feature 200% accurately. She is lying on sunlit sand at a vibrant seaside, wearing a yellow-green leaf-pattern bikini with separate top and bottom, with her belly fully visible. Capture her full figure in a close-angle shot, with sunlight reflecting naturally on sand and water. Render highly realistic textures for skin, bikini, sand, and sea. Apply cinematic lighting and shallow depth of field focused on her, maintaining the exact expression, face, and body from the uploaded photo. The scene should be warm, natural, and photo-realistic, with no alterations to her appearance.'
     },
     {
       id: 4,
-      title: 'Upskirt',
-      description: 'Keep the same person\'s face, facial expression, hairstyle, body proportions, lighting, realism, and background exactly as in the reference image. Use a low-angle perspective to emphasize motion and energy. The person is mid-dance in a vigorous spinning pose. The outfit is a coordinated two-piece bikini: a fitted bikini top is the only garment on the upper body, leaving the midriff fully visible and showing the navel, paired with a matching bikini bottom. An extremely short, flared skirt (less than 15cm in length) is worn around the hips, flaring upward dramatically and horizontally from the spin to fully reveal the bikini bottom, with a clear separation between the skirt and the bikini top. Maintain realistic fabric texture, natural motion, and smooth lighting for a vivid, lifelike result.'
+      title: 'Bikini Stand',
+      description: 'Keep the same face, facial expression, body proportions, background, lighting, hairstyle, and camera angle as the reference image. Do not change the face or its expression. The person is standing in a confident fashion-pose with one leg slightly forward and the upper body leaning forward noticeably, hand resting on the thigh. Change only the outfit. The outfit is a modern, stylish two-piece bikini with a deep sweetheart neckline and coordinated bottoms, paired with trendy high-heel sneakers. Maintain the same background, lighting, shadows, and realistic appearance as the original image.'
     },
     {
       id: 5,
-      title: 'Bikini Stand',
-      description: 'Keep the same face, facial expression, body proportions, background, lighting, hairstyle, and camera angle as the reference image. Do not change the face or its expression. The person is standing in a confident fashion-pose with one leg slightly forward and the upper body leaning forward noticeably, hand resting on the thigh. Change only the outfit. The outfit is a modern, stylish two-piece bikini with a deep sweetheart neckline and coordinated bottoms, paired with trendy high-heel sneakers. Maintain the same background, lighting, shadows, and realistic appearance as the original image.'
+      title: 'Bikini Dance',
+      description: 'Keep the exact same face, facial features, expression, and hairstyle as in the reference image with no changes. Place her on a beach in natural daylight, wearing a full two-piece bikini. She performs a graceful classical dance pose, looking directly at the camera. Her hands are empty. Use a medium shot, not a long shot, with realistic lighting and natural details.'
     },
     {
       id: 6,
@@ -53,51 +53,26 @@ export class Home implements OnInit {
     },
     {
       id: 7,
-      title: 'Beach Laying',
-      description: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original, with no face changes. If the reference image has two people, include both of them naturally together in the same beach scene, keeping their original poses. Change only the background to a bright, sunny beach with clear sky and soft sand. Position the person lying on their stomach on the beach, propped slightly on their elbows, with head up and looking toward the camera. Keep the body relaxed and natural. Maintain a natural, happy facial expression. Dress the person in a tasteful, solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Ensure realistic lighting and shadows that match the outdoor beach environment, with warm sunlight and gentle reflections from the sand and sea. Keep the overall image realistic, bright, and cheerful.'
-    },
-    {
-      id: 8,
       title: 'Beach Knees',
       description: 'Use the reference image as the base. Keep the same person, face, facial expression, hairstyle, and body exactly as in the original with no face changes. If the reference image has two people, include both of them together in the same scene, preserving their faces and expressions. Change only the background to a bright, sunny beach with soft sand and clear blue sky. Position the person kneeling naturally on the sand with legs slightly apart for balance, looking toward the camera with a happy, relaxed expression. Dress the person in a modest, solid-colored bikini of any random color (not limited to blue) suitable for a beach setting. Maintain realistic sunlight, soft shadows, and natural beach lighting that enhances a cheerful, vacation-like atmosphere.'
     },
     {
-      id: 9,
-      title: 'Bathroom',
-      description: 'Use the first image as the base. Keep the same person, pose, face, hairstyle, and expression exactly as in the original. Dress the person in a clean, bath towel wrapped modestly around the body and show full thighs, as if just after a shower. Replace the background with a bright, modern bathroom interior that matches the lighting and perspective of the original photo. Keep the result realistic.'
-    },
-    {
-      id: 10,
-      title: 'Bathroom hidden',
-      description: 'Use the first image as the base. Keep the same person, face, and hairstyle exactly as in the original. The person is wrapped modestly in a clean bath towel, as if just after a shower. They are now looking directly at the camera with a slight, caught-off-guard expression—a subtle widening of the eyes and a hint of worry, as if they\'ve just noticed the observer. The expression is natural and understated, not overacted. The scene is viewed from a high-angle perspective, as if from a small, open window positioned high on a bathroom wall, looking down into the room. Their posture is tense, frozen mid-action. The background is a bright, modern bathroom interior. Keep the scene realistic and natural, maintaining a fully appropriate and modest tone.'
-    },
-    {
-      id: 11,
-      title: 'Bikini V3',
-      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded. Do not modify men, faces, hair, makeup, lips, or body details in any way. Only change the clothing of women as described.'
-    },
-    {
-      id: 12,
+      id: 8,
       title: 'Kidnap',
       description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing the same dress but it is slashed and full dirty showing blwck bra strap and cleveage She is slumped on a dirty concrete floor. She is bound: her hands are tied with white rope and her dress us littile upward from legs. Legs stretched both sides maximum and show her thighs, no cloths on the thighs, She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
     },
     {
-      id: 13,
+      id: 9,
       title: 'Kidnap Bikini',
       description: 'A cinematic, high-detail photograph of an indian woman ( use uploaded photo for face and body ) wearing a light triangle-bikini. She is slumped on a dirty concrete floor. She is bound: her hands are  with white rope. She appears unconscious or sleeping, leaning sideways against a massive, crinkled black plastic trash bag. The setting is a cramped, cluttered storage room with a low ceiling.'
     },
     {
-      id: 14,
+      id: 10,
       title: 'Breast Feeding',
       description: 'The person from my uploaded image sitting comfortably in a soft gray armchair beside a bright window, naturally breastfeeding a baby with gentle, real interaction. She looks directly at the camera with a calm, warm smile. The scene is softly lit by natural daylight, creating a peaceful indoor atmosphere with a softly blurred background. Maintain a realistic photographic tone. Dress her in a colored, modest two-piece outfit inspired by swimwear style, featuring a v-neck top with straps and bottom, designed to look natural and appropriate for a relaxed indoor moment. Keep her face exactly the same as in the uploaded image.'
     },
     {
-      id: 15,
-      title: 'Beach Lying',
-      description: 'Create an ultra-realistic 8K HDR image of the person exactly as in the uploaded photo. Preserve her face, expression, body, and proportions precisely—replicate every feature 200% accurately. She is lying on sunlit sand at a vibrant seaside, wearing a yellow-green leaf-pattern bikini with separate top and bottom, with her belly fully visible. Capture her full figure in a close-angle shot, with sunlight reflecting naturally on sand and water. Render highly realistic textures for skin, bikini, sand, and sea. Apply cinematic lighting and shallow depth of field focused on her, maintaining the exact expression, face, and body from the uploaded photo. The scene should be warm, natural, and photo-realistic, with no alterations to her appearance.'
-    },
-    {
-      id: 16,
+      id: 11,
       title: 'Train',
       description: 'Create a hyper-realistic image of the same young woman from the reference photo, keeping her face, expression, and body shape 100% identical. She has porcelain-white skin and expressive eyes, standing in the heat of a crowded Kolkata train car. She has a curvy figure and wears a net saree with a sleeveless blouse. In a natural candid motion, she lifts both hand behind her head to tie her long dark hair into a ponytail, causing the saree pleats to reveal her midriff fully. Her skin glistens with sweat from the humid environment, reflecting realistic moisture on her face, arms, and torso. Capture a confident, triumphant smile as she poses, with men seated behind her. Maintain realistic lighting, textures, and proportions, without altering her face or body.'
     }
