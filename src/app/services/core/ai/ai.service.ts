@@ -25,9 +25,7 @@ export class AiService {
       model: 'gemini-3-pro-image-preview',
       generationConfig: {
         responseModalities: [ResponseModality.IMAGE],
-        imageConfig: {
-          imageSize: resolution,
-        },
+        imageSize: resolution,
       },
     });
   }
