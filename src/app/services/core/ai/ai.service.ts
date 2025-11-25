@@ -69,7 +69,7 @@ export class AiService {
         {
           role: 'user',
           parts: [
-            { text: payloadText },
+            { text: mavi },
             {
               inlineData: {
                 mimeType: 'image/jpeg',
