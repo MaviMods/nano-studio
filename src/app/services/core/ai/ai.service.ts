@@ -19,12 +19,15 @@ export class AiService {
 
   constructor() {
     const geminiAI = getAI(this.firebaseApp, { backend: new GoogleAIBackend() });
+    const resolution = '2K';
 
     this.model = getGenerativeModel(geminiAI, {
       model: 'gemini-3-pro-image-preview',
       generationConfig: {
         responseModalities: [ResponseModality.IMAGE],
-        responseMimeType: 'image/jpeg',
+        imageConfig: {
+          imageSize: resolution,
+        },
       },
     });
   }
