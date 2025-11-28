@@ -29,7 +29,7 @@ export class Home implements OnInit {
     {
       id: 2,
       title: 'Bikini V2',
-      description: 'Keep the same background, lighting, camera angle, realism, and composition as the original image. Do not change skin tone, texture, or lighting on any person. For every woman in the image, replace only her clothing with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must have a bandeau-style halter and wrap-around top with soft unpadded. Do not modify men, faces, hair, makeup, lips, pose, or body details in any way. Only change the clothing of women as described.'
+      description: 'Use the original image as the full reference. Keep every person’s pose, posture, gesture, expression, body proportions, skin tone, skin texture, lighting, background, realism, and camera angle exactly the same. Do not alter any faces, hair, makeup, lips, body shape, or any details of men. For every woman in the image, change only her clothing. Replace her outfit with a two-piece swimsuit made of smooth stretch swimwear fabric. The swimsuit must use a bandeau-style halter with a wrap-around top that is soft and unpadded. Do not alter the fit, posture, or natural movement of her body. Do not change anything else in the scene. Maintain identical composition and overall styling.'
     },
     {
       id: 3,
