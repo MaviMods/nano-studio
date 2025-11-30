@@ -17,7 +17,7 @@ import {AuthService} from '../../services/core/auth/auth.service';
 export class Home implements OnInit {
   // Floating update signals
   readonly showFloatingUpdate = signal<boolean>(true);
-  readonly floatingUpdateMessage = signal<string>('Dont try real girl image');
+  readonly floatingUpdateMessage = signal<string>('Added new prompt');
 
   // Preset prompts (could be externalized to a service later)
   readonly presets = signal<{ id: number; title: string; description: string }[]>([
@@ -78,8 +78,8 @@ export class Home implements OnInit {
     },
     {
       id: 12,
-      title: 'ananya',
-      description: 'Use the image as the exact reference. Keep every person, pose, expression, position, background, lighting, and shadow unchanged. Do not change any men. Modify only the every woman’s outfit: give her a white cropped T-shirt with red trim and red graphic text, and red tie-side bikini bottoms. Keep any natural wet/translucent look from the original. Everything else stays exactly the same, with full photorealism.'
+      title: 'Ananya',
+      description: 'Use the provided image as the full structural reference. Keep the pose, facial expression, hand positions, leg position, seating angle, background, lighting, shadows, and every other person exactly the same. Preserve the entire composition 100% unchanged. Change everyone outfit with a white cropped T-shirt with red trim and red graphic text, along with red tie-side bikini bottoms of the same shade and style described. Keep the shirt’s slightly wet or translucent look if it exists. Do not change any colors, and do not alter her skin tone or hair unless they already naturally match. Maintain photorealistic detail and maximum fidelity to the original scene.'
     }
   ]);
 
