@@ -75,6 +75,11 @@ export class Home implements OnInit {
       id: 11,
       title: 'Train',
       description: 'Create a hyper-realistic image of the same young woman from the reference photo, keeping her face, expression, and body shape 100% identical. She has porcelain-white skin and expressive eyes, standing in the heat of a crowded Kolkata train car. She has a curvy figure and wears a net saree with a sleeveless blouse. In a natural candid motion, she lifts both hand behind her head to tie her long dark hair into a ponytail, causing the saree pleats to reveal her midriff fully. Her skin glistens with sweat from the humid environment, reflecting realistic moisture on her face, arms, and torso. Capture a confident, triumphant smile as she poses, with men seated behind her. Maintain realistic lighting, textures, and proportions, without altering her face or body.'
+    },
+    {
+      id: 12,
+      title: 'ananya',
+      description: 'Use the provided image as the full structural reference. Keep the pose, facial expression, hand positions, leg position, seating angle, background, lighting, shadows, and every other person exactly the same. Preserve the entire composition 100% unchanged. Change her outfit with a white cropped T-shirt with red trim and red graphic text, along with red tie-side bikini bottoms of the same shade and style described. Keep the shirt’s slightly wet or translucent look if it exists. Do not change any colors, and do not alter her skin tone or hair unless they already naturally match. Maintain photorealistic detail and maximum fidelity to the original scene'
     }
   ]);
 
