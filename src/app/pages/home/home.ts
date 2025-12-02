@@ -24,7 +24,7 @@ export class Home implements OnInit {
     {
       id: 1,
       title: 'Bikini',
-      description: 'Create an ultra-realistic portrait based on the reference image, preserving each woman’s original face, expression, body shape, pose, posture, gesture, lighting, environment, and background exactly as they appear. Do not alter faces, skin tone, skin texture, or proportions. For every woman, replace her clothing with a matching triangle-style bikini top and bottom (no pants of any kind). Her midriff and navel must remain naturally visible. Focus on lifelike skin detail, accurate anatomy, natural shading, and overall realism. Maintain the full composition, camera angle, and lighting conditions of the reference image. No men should appear in the scene.'
+      description: 'Create an ultra-realistic portrait based on the reference image, preserving each woman’s original face, expression, body shape, pose, posture, gesture, lighting, environment, and background exactly as they appear. Do not alter faces, skin tone, skin texture, or proportions. For every woman, replace her clothing with a matching triangle-style bikini top and bottom (no pants of any kind). Her midriff and navel must remain naturally visible. Focus on lifelike skin detail, accurate anatomy, natural shading, and overall realism. Maintain the full composition, camera angle, and lighting conditions of the reference image.'
     },
     {
       id: 2,
