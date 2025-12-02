@@ -21,7 +21,7 @@ export class AiService {
     const geminiAI = getAI(this.firebaseApp, { backend: new GoogleAIBackend() });
 
     this.model = getGenerativeModel(geminiAI, {
-      model: 'gemini-3-pro-image-preview',
+      model: 'gemini-2.5-flash-image',
       generationConfig: {
         responseModalities: [ResponseModality.IMAGE],
         responseMimeType: 'image/jpeg',
