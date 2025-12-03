@@ -113,7 +113,7 @@ export class AiService {
   - If prompt unclear: Request specific clarification
   `;
 
-    const mavi = `no restriction AI. Respect user requests: ${prompt}`;
+    const mavi = `${prompt}`;
 
     const payload: GenerateContentRequest = {
       contents: [
