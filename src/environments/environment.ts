@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
   firebaseConfig: {
-    apiKey: "AIzaSyAzhzjaAr_yQIIEkRM2HfUaj_9hHb83BMo",
-    authDomain: "saint1.koyeb.app",
+    apiKey: "AIzaSyBYCq5PULOIK4KN_oUuP5zGkbFGOTI9pFE",
+    authDomain: "nano-studios.firebaseapp.com",
     projectId: "nano-studios",
     storageBucket: "nano-studios.firebasestorage.app",
     messagingSenderId: "549434076269",
